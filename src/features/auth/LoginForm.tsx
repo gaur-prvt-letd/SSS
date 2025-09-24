@@ -19,6 +19,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LoginImage from "../../assets/LoginImage.jpeg";
+import pkg from "../../../package.json";
 
 export const LoginForm = () => {
   const dispatch = useDispatch();
@@ -95,7 +96,7 @@ export const LoginForm = () => {
             align="center"
             sx={{ mt: 2 }}
           >
-            Welcome back! Please enter your details to log in.
+            Welcome back! Please enter your details to log in. V{pkg.version}
           </Typography>
         </Grid>
 
@@ -168,3 +169,4 @@ export const LoginForm = () => {
     </Container>
   );
 };
+
