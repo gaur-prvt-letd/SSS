@@ -1,13 +1,6 @@
-export default TransactionsPage;
-import React from 'react'
-
 function TransactionsPage() {
-  return (
-    <div>
-      hiiiiii
-    </div>
-  )
+  //transaction page
+  return <div>hiiiiii</div>;
 }
 
-export default TransactionsPage
-
+export default TransactionsPage;
