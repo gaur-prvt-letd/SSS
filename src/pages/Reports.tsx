@@ -1,5 +1,5 @@
 function Reports() {
-  return <div>sdfsdfsdfsdfdsf</div>;
+  return <div>Reports</div>;
 }
 
 export default Reports;
