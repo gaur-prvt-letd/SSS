@@ -1,5 +1,5 @@
 function TransactionsPage() {
-  return <div>hiiiiii</div>;
+  return <div>TransactionsPage</div>;
 }
 
 export default TransactionsPage;
