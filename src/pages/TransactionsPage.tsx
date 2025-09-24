@@ -1,4 +1,5 @@
 function TransactionsPage() {
+  //transaction page
   return <div>hiiiiii</div>;
 }
 
