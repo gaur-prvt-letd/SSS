@@ -1,3 +1,4 @@
+export default TransactionsPage;
 import React from 'react'
 
 function TransactionsPage() {
@@ -9,3 +10,4 @@ function TransactionsPage() {
 }
 
 export default TransactionsPage
+

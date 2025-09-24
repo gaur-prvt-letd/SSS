@@ -1,7 +1,7 @@
 {
   "name": "sss",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -19,8 +19,8 @@
     "axios": "^1.12.2",
     "clsx": "^2.1.1",
     "formik": "^2.4.6",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
     "react-error-boundary": "^6.0.0",
     "react-helmet-async": "^2.0.5",
     "react-hot-toast": "^2.6.0",
@@ -28,6 +28,7 @@
     "react-router-dom": "^7.9.1",
     "react-toastify": "^11.0.5",
     "react-window": "^2.1.0",
+    "vercel": "^48.1.1",
     "yup": "^1.7.0",
     "zod": "^4.1.8"
   },

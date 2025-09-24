@@ -1,6 +1,5 @@
-import React from 'react'
-
 function HomePage() {
+  return <div>hiiiii</div>;
   return (
     <div>
       hiiiii
@@ -8,4 +7,4 @@ function HomePage() {
   )
 }
 
-export default HomePage
+export default HomePage;

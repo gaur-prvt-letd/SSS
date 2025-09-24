@@ -1,11 +1,5 @@
-import React from 'react'
-
 function NotFound() {
-  return (
-    <div>
-      
-    </div>
-  )
+  return <div></div>;
 }
 
-export default NotFound
+export default NotFound;

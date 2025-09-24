@@ -5,6 +5,8 @@ import Navbar from "./Navbar";
 import { Sidebar } from "./Sidebar";
 import { useState } from "react";
 
+const SIDEBAR_WIDTH = 240; // Define your sidebar width here
+
 export const Layout = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -29,7 +31,25 @@ export const Layout = () => {
         onClose={() => setMobileOpen(false)}
       />
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          // Correctly calculate width and margin to handle open/closed states
+          ml: { sm: isSidebarOpen && !isMobile ? `${SIDEBAR_WIDTH}px` : 0 },
+          width: {
+            sm: `calc(100% - ${
+              isSidebarOpen && !isMobile ? SIDEBAR_WIDTH : 0
+            }px)`,
+          },
+          transition: (theme) =>
+            theme.transitions.create(["margin", "width"], {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+        }}
+      >
         <Toolbar /> {/* Push content below navbar */}
         <Outlet />
       </Box>
