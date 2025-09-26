@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import {
   Box,
   Typography,
@@ -17,37 +19,81 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LoginImage from "../../assets/LoginImage.jpeg";
 import { Input } from "../../components/common/CustomInput";
 import { Button } from "../../components/common/CustomButton";
+import { authApi } from "../../services/api";
+
+// Validation schema
+const validationSchema = Yup.object({
+  name: Yup.string()
+    .min(2, "Name must be at least 2 characters")
+    .required("Full name is required"),
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+  confirmPassword: Yup.string()
+    .oneOf([Yup.ref("password")], "Passwords must match")
+    .required("Please confirm your password"),
+});
 
 function RegisterForm() {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      setError("");
+      
+      try {
+        // Call register API with the required payload format
+        const payload = {
+          name: values.name,
+          email: values.email,
+          mobile: "", // Provide a default or collect from user
+          password: values.password,
+        };
+
+        const response = await authApi.register(payload);
+        console.log('Registration successful:', response.data);
+        
+        // Navigate to login page on successful registration
+        navigate("/login");
+      } catch (error: unknown) {
+        console.error('Registration failed:', error);
+        
+        // Handle different error types
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { data?: { message?: string } }; message?: string };
+          if (axiosError.response?.data?.message) {
+            setError(axiosError.response.data.message);
+          } else if (axiosError.message) {
+            setError(axiosError.message);
+          } else {
+            setError("Registration failed. Please try again.");
+          }
+        } else {
+          setError("Registration failed. Please try again.");
+        }
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   const handleClickShowPassword = () => setShowPassword((s) => !s);
   const handleMouseDownPassword = (
     event: React.MouseEvent<HTMLButtonElement>
   ) => {
     event.preventDefault();
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    if (!name || !email || !mobile || !password || !confirmPassword) {
-      setError("Please fill all fields.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    navigate("/login");
   };
 
   return (
@@ -90,7 +136,7 @@ function RegisterForm() {
               </Typography>
             </Box>
 
-            <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
+            <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Input
@@ -99,8 +145,11 @@ function RegisterForm() {
                     id="name"
                     label="Full name"
                     name="name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={formik.values.name}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.name && Boolean(formik.errors.name)}
+                    helperText={formik.touched.name && formik.errors.name}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -111,21 +160,14 @@ function RegisterForm() {
                     label="Email Address"
                     name="email"
                     autoComplete="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
                   />
                 </Grid>
-                <Grid item xs={12}>
-                  <Input
-                    required
-                    fullWidth
-                    id="mobile"
-                    label="Mobile number"
-                    name="mobile"
-                    value={mobile}
-                    onChange={(e) => setMobile(e.target.value)}
-                  />
-                </Grid>
+               
                 <Grid item xs={12}>
                   <Input
                     required
@@ -134,8 +176,11 @@ function RegisterForm() {
                     label="Password"
                     type={showPassword ? "text" : "password"}
                     id="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.password && Boolean(formik.errors.password)}
+                    helperText={formik.touched.password && formik.errors.password}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -160,8 +205,11 @@ function RegisterForm() {
                     label="Confirm password"
                     type={showPassword ? "text" : "password"}
                     id="confirmPassword"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    value={formik.values.confirmPassword}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.confirmPassword && Boolean(formik.errors.confirmPassword)}
+                    helperText={formik.touched.confirmPassword && formik.errors.confirmPassword}
                   />
                 </Grid>
               </Grid>
@@ -176,9 +224,10 @@ function RegisterForm() {
                 type="submit"
                 fullWidth
                 variant="contained"
+                disabled={formik.isSubmitting}
                 sx={{ mt: 3, mb: 2 }}
               >
-                Create account
+                {formik.isSubmitting ? "Creating account..." : "Create account"}
               </Button>
 
               <Box textAlign="center">

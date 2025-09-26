@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import { login } from "./authSlice";
 import {
   Box,
@@ -11,34 +13,86 @@ import {
   Avatar,
   InputAdornment,
   IconButton,
+  Grid,
+  Alert,
 } from "@mui/material";
-import Grid from "@mui/material/Grid";
 import { Input } from "../../components/common/CustomInput";
 import { Button } from "../../components/common/CustomButton";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import LoginImage from "../../assets/LoginImage.jpeg";
+import { authApi } from "../../services/api";
 import pkg from "../../../package.json";
+
+// Validation schema
+const validationSchema = Yup.object({
+  email: Yup.string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: Yup.string()
+    .min(6, "Password must be at least 6 characters")
+    .required("Password is required"),
+});
 
 export const LoginForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState("");
 
-  const handleLogin = (event: React.FormEvent) => {
-    event.preventDefault();
-    dispatch(
-      login({
-        name: "John Doe",
-        id: "some-id", // Replace with actual id if available
-      })
-    );
-    navigate("/dashboard");
-  };
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      setError("");
+      
+      try {
+        // Call login API
+        const response = await authApi.login({
+          email: values.email,
+          password: values.password,
+        });
+
+        const { access_token } = response.data;
+        
+        // Store token in localStorage
+        localStorage.setItem("access_token", access_token);
+        
+        // Dispatch login action with user data and token
+        dispatch(login({
+          name: "John Doe", // You can extract from token or make another API call
+          id: "user-id", // Extract from token or API response
+        }));
+        
+        console.log('Login successful:', response.data);
+        
+        // Navigate to dashboard
+        navigate("/dashboard");
+      } catch (error: unknown) {
+        console.error('Login failed:', error);
+        
+        // Handle different error types
+        if (error && typeof error === 'object' && 'response' in error) {
+          const axiosError = error as { response?: { data?: { message?: string } }; message?: string };
+          if (axiosError.response?.data?.message) {
+            setError(axiosError.response.data.message);
+          } else if (axiosError.message) {
+            setError(axiosError.message);
+          } else {
+            setError("Login failed. Please try again.");
+          }
+        } else {
+          setError("Login failed. Please try again.");
+        }
+      } finally {
+        setSubmitting(false);
+      }
+    },
+  });
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
 
@@ -111,7 +165,7 @@ export const LoginForm = () => {
                 Sign in
               </Typography>
             </Box>
-            <Box component="form" onSubmit={handleLogin} sx={{ mt: 3 }}>
+            <Box component="form" onSubmit={formik.handleSubmit} sx={{ mt: 3 }}>
               <Grid container spacing={2}>
                 <Grid item xs={12}>
                   <Input
@@ -122,8 +176,11 @@ export const LoginForm = () => {
                     name="email"
                     autoComplete="email"
                     autoFocus
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formik.values.email}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.email && Boolean(formik.errors.email)}
+                    helperText={formik.touched.email && formik.errors.email}
                   />
                 </Grid>
                 <Grid item xs={12}>
@@ -135,8 +192,11 @@ export const LoginForm = () => {
                     type={showPassword ? "text" : "password"}
                     id="password"
                     autoComplete="current-password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    value={formik.values.password}
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    error={formik.touched.password && Boolean(formik.errors.password)}
+                    helperText={formik.touched.password && formik.errors.password}
                     InputProps={{
                       endAdornment: (
                         <InputAdornment position="end">
@@ -154,13 +214,21 @@ export const LoginForm = () => {
                   />
                 </Grid>
               </Grid>
+
+              {error ? (
+                <Box sx={{ mt: 2 }}>
+                  <Alert severity="error">{error}</Alert>
+                </Box>
+              ) : null}
+
               <Button
                 type="submit"
                 fullWidth
                 variant="contained"
+                disabled={formik.isSubmitting}
                 sx={{ mt: 3, mb: 2 }}
               >
-                Sign In
+                {formik.isSubmitting ? "Signing in..." : "Sign In"}
               </Button>
             </Box>
           </Paper>
