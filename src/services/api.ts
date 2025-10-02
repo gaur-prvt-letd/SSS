@@ -7,7 +7,7 @@ export const authApi = {
     apiClient.post(API_ENDPOINTS.AUTH.LOGIN, credentials),
 
   register: (userData: {
-    name: string;
+    username: string;
     email: string;
     mobile: string;
     password: string;

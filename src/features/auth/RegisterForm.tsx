@@ -23,7 +23,7 @@ import { authApi } from "../../services/api";
 
 // Validation schema
 const validationSchema = Yup.object({
-  name: Yup.string()
+  username: Yup.string()
     .min(2, "Name must be at least 2 characters")
     .required("Full name is required"),
   email: Yup.string()
@@ -44,7 +44,7 @@ function RegisterForm() {
 
   const formik = useFormik({
     initialValues: {
-      name: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
@@ -56,7 +56,7 @@ function RegisterForm() {
       try {
         // Call register API with the required payload format
         const payload = {
-          name: values.name,
+          username: values.username,
           email: values.email,
           mobile: "", // Provide a default or collect from user
           password: values.password,
@@ -142,14 +142,14 @@ function RegisterForm() {
                   <Input
                     required
                     fullWidth
-                    id="name"
+                    id="username"
                     label="Full name"
-                    name="name"
-                    value={formik.values.name}
+                    name="username"
+                    value={formik.values.username}
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
-                    error={formik.touched.name && Boolean(formik.errors.name)}
-                    helperText={formik.touched.name && formik.errors.name}
+                    error={formik.touched.username && Boolean(formik.errors.username)}
+                    helperText={formik.touched.username && formik.errors.username}
                   />
                 </Grid>
                 <Grid item xs={12}>
