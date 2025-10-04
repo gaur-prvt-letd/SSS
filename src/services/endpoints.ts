@@ -39,6 +39,15 @@ export const API_ENDPOINTS = {
     EXPORT: '/transactions/export',
   },
   
+  // Goals endpoints
+  GOALS: {
+    LIST: '/goals',
+    CREATE: '/api/add/goal',
+    GET_BY_ID: (id: string) => `/goals/${id}`,
+    UPDATE: (id: string) => `/goals/${id}`,
+    DELETE: (id: string) => `/goals/${id}`,
+  },
+  
   // Reports endpoints
   REPORTS: {
     FINANCIAL: '/reports/financial',

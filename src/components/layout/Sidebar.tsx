@@ -9,14 +9,20 @@ import {
   Box,
   Typography,
   Divider,
+  Collapse,
 } from "@mui/material";
 import { SIDEBAR_WIDTH } from "./constants";
 import Logo from "../../assets/logo/LogoNEW.png";
 import { Link } from "react-router-dom";
-import { DASHBOARD, TRANSACTIONS, REPORTS } from "../../codes/routes";
+import { DASHBOARD, ADD_GOAL, REPORTS, TRANSACTIONS } from "../../codes/routes";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import TimelineIcon from '@mui/icons-material/Timeline';
+import AddIcon from '@mui/icons-material/Add';
+import ListIcon from '@mui/icons-material/List';
+import ExpandLess from '@mui/icons-material/ExpandLess';
+import ExpandMore from '@mui/icons-material/ExpandMore';
+import { useState } from 'react';
 
 type SidebarProps = {
   open: boolean;
@@ -25,6 +31,17 @@ type SidebarProps = {
 };
 
 export const Sidebar = ({ open, variant, onClose }: SidebarProps) => {
+  const [goalsOpen, setGoalsOpen] = useState(false);
+
+  const handleGoalsToggle = () => {
+    setGoalsOpen(!goalsOpen);
+  };
+
+  const handleItemClick = () => {
+    if (variant === "temporary" && onClose) {
+      onClose();
+    }
+  };
   return (
     <Drawer
       variant={variant}
@@ -74,11 +91,12 @@ export const Sidebar = ({ open, variant, onClose }: SidebarProps) => {
       <Divider sx={{ my: 1 }} />
 
       <List>
+        {/* Dashboard */}
         <ListItem disablePadding>
           <ListItemButton
             component={Link}
             to={DASHBOARD}
-            onClick={() => variant === "temporary" && onClose && onClose()}
+            onClick={handleItemClick}
             sx={{ pl: 2, borderRadius: 1, alignItems: 'center', '&:hover': { backgroundColor: 'action.hover' } }}
           >
             <ListItemIcon sx={{ minWidth: 36 }}>
@@ -88,25 +106,92 @@ export const Sidebar = ({ open, variant, onClose }: SidebarProps) => {
           </ListItemButton>
         </ListItem>
 
+        {/* Goals with Sub-menu */}
         <ListItem disablePadding>
           <ListItemButton
-            component={Link}
-            to={TRANSACTIONS}
-            onClick={() => variant === "temporary" && onClose && onClose()}
+            onClick={handleGoalsToggle}
             sx={{ pl: 2, borderRadius: 1, alignItems: 'center', '&:hover': { backgroundColor: 'action.hover' } }}
           >
             <ListItemIcon sx={{ minWidth: 36 }}>
               <ReceiptLongIcon fontSize="small" />
             </ListItemIcon>
+            <ListItemText primary="Goals" primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }} />
+            {goalsOpen ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+        </ListItem>
+
+        {/* Goals Sub-menu */}
+        <Collapse in={goalsOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            <ListItem disablePadding>
+              <ListItemButton
+                component={Link}
+                to={ADD_GOAL}
+                onClick={handleItemClick}
+                sx={{ 
+                  pl: 4, 
+                  borderRadius: 1, 
+                  alignItems: 'center', 
+                  '&:hover': { backgroundColor: 'action.hover' },
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)' // Slightly different background for sub-items
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <AddIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="Add New Goal" 
+                  primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }} 
+                />
+              </ListItemButton>
+            </ListItem>
+
+            <ListItem disablePadding>
+              <ListItemButton
+                component={Link}
+                to="/goals/list"
+                onClick={handleItemClick}
+                sx={{ 
+                  pl: 4, 
+                  borderRadius: 1, 
+                  alignItems: 'center', 
+                  '&:hover': { backgroundColor: 'action.hover' },
+                  backgroundColor: 'rgba(0, 0, 0, 0.04)'
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 36 }}>
+                  <ListIcon fontSize="small" />
+                </ListItemIcon>
+                <ListItemText 
+                  primary="View Goals" 
+                  primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }} 
+                />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Collapse>
+
+        {/* Transactions */}
+        <ListItem disablePadding>
+          <ListItemButton
+            component={Link}
+            to={TRANSACTIONS}
+            onClick={handleItemClick}
+            sx={{ pl: 2, borderRadius: 1, alignItems: 'center', '&:hover': { backgroundColor: 'action.hover' } }}
+          >
+            <ListItemIcon sx={{ minWidth: 36 }}>
+              <TimelineIcon fontSize="small" />
+            </ListItemIcon>
             <ListItemText primary="Transactions" primaryTypographyProps={{ variant: 'body2', fontWeight: 600 }} />
           </ListItemButton>
         </ListItem>
 
+        {/* Reports */}
         <ListItem disablePadding>
           <ListItemButton
             component={Link}
             to={REPORTS}
-            onClick={() => variant === "temporary" && onClose && onClose()}
+            onClick={handleItemClick}
             sx={{ pl: 2, borderRadius: 1, alignItems: 'center', '&:hover': { backgroundColor: 'action.hover' } }}
           >
             <ListItemIcon sx={{ minWidth: 36 }}>

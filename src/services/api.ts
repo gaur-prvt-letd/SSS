@@ -45,3 +45,40 @@ export const dashboardApi = {
   getRecentActivities: () =>
     apiClient.get(API_ENDPOINTS.DASHBOARD.RECENT_ACTIVITIES),
 };
+
+// Goals API calls
+export const goalApi = {
+  getGoals: (params?: { page?: number; limit?: number }) =>
+    apiClient.get(API_ENDPOINTS.GOALS.LIST, { params }),
+
+  createGoal: (goalData: {
+    goal_title: string;
+    description: string;
+    goal_type: string;
+    start_date: string;
+    end_date: string;
+    priority: string;
+    category: string;
+  }) =>
+    apiClient.post(API_ENDPOINTS.GOALS.CREATE, goalData),
+
+  getGoalById: (id: string) =>
+    apiClient.get(API_ENDPOINTS.GOALS.GET_BY_ID(id)),
+
+  updateGoal: (
+    id: string,
+    goalData: {
+      goal_title?: string;
+      description?: string;
+      goal_type?: string;
+      start_date?: string;
+      end_date?: string;
+      priority?: string;
+      category?: string;
+    }
+  ) =>
+    apiClient.put(API_ENDPOINTS.GOALS.UPDATE(id), goalData),
+
+  deleteGoal: (id: string) =>
+    apiClient.delete(API_ENDPOINTS.GOALS.DELETE(id)),
+};
