@@ -62,11 +62,17 @@ export const LoginForm = () => {
         // Store token in localStorage
         localStorage.setItem("access_token", access_token);
         
-        // Dispatch login action with user data and token
-        dispatch(login({
+        // Create user data object
+        const userData = {
           name: "John Doe", // You can extract from token or make another API call
           id: "user-id", // Extract from token or API response
-        }));
+        };
+        
+        // Store user data in localStorage
+        localStorage.setItem("user_data", JSON.stringify(userData));
+        
+        // Dispatch login action with user data
+        dispatch(login(userData));
         
         console.log('Login successful:', response.data);
         

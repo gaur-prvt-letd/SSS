@@ -4,6 +4,7 @@ import { LoginForm } from "../features/auth/LoginForm";
 // import  RegisterForm from "../features/auth/RegisterForm";
 import AddGoal from "../features/goal/Add-goal";
 import RegisterForm from "../features/auth/RegisterForm";
+import GoalsList from "../features/goal/GoalsList";
 
 export const routesConfig = [
   { path: "/login", element: <LoginForm />, public: true },
@@ -12,6 +13,7 @@ export const routesConfig = [
   // { path: "/transactions", element: <TransactionsPage />, public: false },
   { path: "/add-goal", element: <AddGoal />, public: false },
   { path: "/reports", element: <div>Reports Page</div>, public: false },
+  { path: "/goals/list", element: <GoalsList />, public: false },
 ];
 
 export default routesConfig;

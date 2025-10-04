@@ -14,7 +14,7 @@ import {
 import { SIDEBAR_WIDTH } from "./constants";
 import Logo from "../../assets/logo/LogoNEW.png";
 import { Link } from "react-router-dom";
-import { DASHBOARD, ADD_GOAL, REPORTS, TRANSACTIONS } from "../../codes/routes";
+import { DASHBOARD, ADD_GOAL, REPORTS, TRANSACTIONS, GOALS_LIST } from "../../codes/routes";
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import TimelineIcon from '@mui/icons-material/Timeline';
@@ -149,7 +149,7 @@ export const Sidebar = ({ open, variant, onClose }: SidebarProps) => {
             <ListItem disablePadding>
               <ListItemButton
                 component={Link}
-                to="/goals/list"
+                to={GOALS_LIST}
                 onClick={handleItemClick}
                 sx={{ 
                   pl: 4, 

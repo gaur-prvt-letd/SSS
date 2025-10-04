@@ -43,8 +43,11 @@ apiClient.interceptors.response.use(
       console.warn('🚫 Unauthorized access - token expired or invalid');
       // Clear invalid token
       localStorage.removeItem('access_token');
-      // Redirect to login
-      window.location.href = '/login';
+      // Only redirect if we're not already on login page
+      if (window.location.pathname !== '/login') {
+        console.log('Redirecting to login due to 401 error');
+        window.location.href = '/login';
+      }
     }
     
     if (error.response?.status >= 500) {
