@@ -1,6 +1,13 @@
 // API Endpoints
-export const API_ENDPOINTS = {
-  // Auth endpoints
+export const API_ENDPOIN  ={// Goals endpoints
+  GOALS: {
+    LIST: '/api/goals',
+    CREATE: '/api/add/goal',
+    GET_BY_ID: (id: string) => `/api/goals/${id}`,
+    UPDATE: (id: string) => `/api/goals/${id}`,
+    DELETE: (id: string) => `/api/goals/${id}`,
+    TOGGLE_COMPLETION: (id: string) => `/api/goals/${id}/toggle`,
+  }, // Auth endpoints
   AUTH: {
     LOGIN: '/auth/login',
     REGISTER: '/auth/register',
@@ -38,6 +45,15 @@ export const API_ENDPOINTS = {
     SEARCH: '/transactions/search',
     EXPORT: '/transactions/export',
   },
+  
+  // // Goals endpoints
+  // GOALS: {
+  //   LIST: '/api//goals',
+  //   CREATE: '/api/add/goal',
+  //   GET_BY_ID: (id: string) => `/api/goals/${id}`,
+  //   UPDATE: (id: string) => `/api/goals/${id}`,
+  //   DELETE: (id: string) => `/api/goals/${id}`,
+  // },
   
   // Reports endpoints
   REPORTS: {
