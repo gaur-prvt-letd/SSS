@@ -5,7 +5,7 @@ import Navbar from "./Navbar";
 import { Sidebar } from "./Sidebar";
 import { useState } from "react";
 
-const SIDEBAR_WIDTH = 240; // Define your sidebar width here
+const SIDEBAR_WIDTH = -30; // Define your sidebar width here
 
 export const Layout = () => {
   const theme = useTheme();
@@ -36,13 +36,17 @@ export const Layout = () => {
         sx={{
           flexGrow: 1,
           p: 3,
-          // Correctly calculate width and margin to handle open/closed states
-          ml: { sm: isSidebarOpen && !isMobile ? `${SIDEBAR_WIDTH}px` : 0 },
-          width: {
-            sm: `calc(100% - ${
-              isSidebarOpen && !isMobile ? SIDEBAR_WIDTH : 0
-            }px)`,
+          // Remove margin-left to prevent extra spacing
+          ml: {
+            sm: isSidebarOpen && !isMobile ? `${SIDEBAR_WIDTH}px` : 0,
+            lg:
+              isSidebarOpen && !isMobile
+                ? `${SIDEBAR_WIDTH}px`
+                : !isSidebarOpen && !isMobile
+                  ? `-260px`
+                  : 0,
           },
+
           transition: (theme) =>
             theme.transitions.create(["margin", "width"], {
               easing: theme.transitions.easing.sharp,

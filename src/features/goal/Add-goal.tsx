@@ -19,22 +19,22 @@ import { goalApi } from "../../services/api";
 // Helper function to calculate end date based on goal type
 const calculateEndDate = (start_date: string, goal_type: string): string => {
   if (!start_date || !goal_type) return start_date;
-  
+
   const start = new Date(start_date);
-  
+
   switch (goal_type) {
     case "daily":
       return start_date; // Same day for daily goals
     case "weekly": {
       const weekEnd = new Date(start);
       weekEnd.setDate(start.getDate() + 6); // Add 6 days (7 total including start)
-      return weekEnd.toISOString().split('T')[0];
+      return weekEnd.toISOString().split("T")[0];
     }
     case "monthly": {
       const monthEnd = new Date(start);
       monthEnd.setMonth(start.getMonth() + 1);
       monthEnd.setDate(monthEnd.getDate() - 1); // Last day of the month
-      return monthEnd.toISOString().split('T')[0];
+      return monthEnd.toISOString().split("T")[0];
     }
     default:
       return start_date;
@@ -43,7 +43,7 @@ const calculateEndDate = (start_date: string, goal_type: string): string => {
 
 // Get today's date in YYYY-MM-DD format
 const getTodayDate = (): string => {
-  return new Date().toISOString().split('T')[0];
+  return new Date().toISOString().split("T")[0];
 };
 
 function AddGoal() {
@@ -62,20 +62,25 @@ function AddGoal() {
     validationSchema: goalValidationSchema,
     onSubmit: async (values, { setSubmitting, resetForm }) => {
       setError("");
-      
+
       try {
         console.log("Goal Form Values:", values);
-        
+
         // Check if token exists in localStorage
-        const token = localStorage.getItem('access_token');
-        console.log('Token from localStorage:', token ? 'Token exists' : 'No token found');
-        
+        const token = localStorage.getItem("access_token");
+        console.log(
+          "Token from localStorage:",
+          token ? "Token exists" : "No token found"
+        );
+
         if (!token) {
-          setError("You must be logged in to create a goal. Please login first.");
+          setError(
+            "You must be logged in to create a goal. Please login first."
+          );
           setSubmitting(false);
           return;
         }
-        
+
         // Call the API to save the goal
         const goalPayload = {
           goal_title: values.goal_title,
@@ -86,25 +91,27 @@ function AddGoal() {
           priority: values.priority,
           category: values.category,
         };
-        
-        console.log('📤 Sending goal payload:', goalPayload);
-        
+
+        console.log("📤 Sending goal payload:", goalPayload);
+
         const response = await goalApi.createGoal(goalPayload);
-        
-        console.log('Goal created successfully:', response.data);
-        
+
+        console.log("Goal created successfully:", response.data);
+
         // Reset form after successful submission
         resetForm();
-        
+
         // Show success message
         alert("Goal created successfully!");
-        
       } catch (error: unknown) {
         console.error("Failed to create goal:", error);
-        
+
         // Handle different error types
-        if (error && typeof error === 'object' && 'response' in error) {
-          const axiosError = error as { response?: { data?: { message?: string } }; message?: string };
+        if (error && typeof error === "object" && "response" in error) {
+          const axiosError = error as {
+            response?: { data?: { message?: string } };
+            message?: string;
+          };
           if (axiosError.response?.data?.message) {
             setError(axiosError.response.data.message);
           } else if (axiosError.message) {
@@ -125,17 +132,19 @@ function AddGoal() {
   const handleGoalTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const goal_type = event.target.value;
     formik.setFieldValue("goal_type", goal_type);
-    
+
     // Auto-calculate end date based on goal type
     const end_date = calculateEndDate(formik.values.start_date, goal_type);
     formik.setFieldValue("end_date", end_date);
   };
 
   // Handle start date change to recalculate end date
-  const handleStartDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleStartDateChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     const start_date = event.target.value;
     formik.setFieldValue("start_date", start_date);
-    
+
     // Recalculate end date if goal type is selected
     if (formik.values.goal_type) {
       const end_date = calculateEndDate(start_date, formik.values.goal_type);
@@ -144,20 +153,8 @@ function AddGoal() {
   };
 
   return (
-    <Container component="main" maxWidth="md" sx={{ py: 4 }}>
+    <Container component="main" maxWidth="md" >
       <Paper elevation={3} sx={{ p: { xs: 3, md: 4 } }}>
-        <Box display="flex" flexDirection="column" alignItems="center" sx={{ mb: 3 }}>
-          <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-            <AddIcon />
-          </Avatar>
-          <Typography component="h1" variant="h4" gutterBottom>
-            Add New Goal
-          </Typography>
-          <Typography variant="body1" color="text.secondary" align="center">
-            Set your goals and track your progress towards achieving them
-          </Typography>
-        </Box>
-
         <Box component="form" onSubmit={formik.handleSubmit}>
           <Grid container spacing={3}>
             {/* Goal goal_title */}
@@ -172,8 +169,12 @@ function AddGoal() {
                 value={formik.values.goal_title}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.goal_title && Boolean(formik.errors.goal_title)}
-                helperText={formik.touched.goal_title && formik.errors.goal_title}
+                error={
+                  formik.touched.goal_title && Boolean(formik.errors.goal_title)
+                }
+                helperText={
+                  formik.touched.goal_title && formik.errors.goal_title
+                }
               />
             </Grid>
 
@@ -191,8 +192,13 @@ function AddGoal() {
                 value={formik.values.description}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.description && Boolean(formik.errors.description)}
-                helperText={formik.touched.description && formik.errors.description}
+                error={
+                  formik.touched.description &&
+                  Boolean(formik.errors.description)
+                }
+                helperText={
+                  formik.touched.description && formik.errors.description
+                }
               />
             </Grid>
 
@@ -208,7 +214,9 @@ function AddGoal() {
                 value={formik.values.goal_type}
                 onChange={handleGoalTypeChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.goal_type && Boolean(formik.errors.goal_type)}
+                error={
+                  formik.touched.goal_type && Boolean(formik.errors.goal_type)
+                }
                 helperText={formik.touched.goal_type && formik.errors.goal_type}
               >
                 <MenuItem value="daily">Daily Goal</MenuItem>
@@ -228,7 +236,9 @@ function AddGoal() {
                 value={formik.values.priority}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.priority && Boolean(formik.errors.priority)}
+                error={
+                  formik.touched.priority && Boolean(formik.errors.priority)
+                }
                 helperText={formik.touched.priority && formik.errors.priority}
               >
                 <MenuItem value="low">Low Priority</MenuItem>
@@ -249,7 +259,9 @@ function AddGoal() {
                 value={formik.values.category}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.category && Boolean(formik.errors.category)}
+                error={
+                  formik.touched.category && Boolean(formik.errors.category)
+                }
                 helperText={formik.touched.category && formik.errors.category}
               />
             </Grid>
@@ -266,8 +278,12 @@ function AddGoal() {
                 value={formik.values.start_date}
                 onChange={handleStartDateChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.start_date && Boolean(formik.errors.start_date)}
-                helperText={formik.touched.start_date && formik.errors.start_date}
+                error={
+                  formik.touched.start_date && Boolean(formik.errors.start_date)
+                }
+                helperText={
+                  formik.touched.start_date && formik.errors.start_date
+                }
                 InputLabelProps={{
                   shrink: true,
                 }}
@@ -286,7 +302,9 @@ function AddGoal() {
                 value={formik.values.end_date}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
-                error={formik.touched.end_date && Boolean(formik.errors.end_date)}
+                error={
+                  formik.touched.end_date && Boolean(formik.errors.end_date)
+                }
                 helperText={formik.touched.end_date && formik.errors.end_date}
                 disabled={!formik.values.goal_type} // Disabled until goal type is selected
                 InputLabelProps={{

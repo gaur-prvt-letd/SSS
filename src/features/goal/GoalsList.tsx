@@ -84,12 +84,12 @@ function GoalsList() {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
+
   // Pagination
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [totalCount, setTotalCount] = useState(0);
-  
+
   // Search and filters
   const [searchTerm, setSearchTerm] = useState("");
   const [priorityFilter, setPriorityFilter] = useState("");
@@ -104,32 +104,31 @@ function GoalsList() {
     try {
       setLoading(true);
       setError("");
-      
+
       // Check if token exists (but don't redirect here)
-      const token = localStorage.getItem('access_token');
+      const token = localStorage.getItem("access_token");
       if (!token) {
         setError("You must be logged in to view goals. Please login first.");
         setLoading(false);
         return;
       }
-      
+
       // Call the actual API
-      console.log('📡 Fetching goals from API...');
-      
+      console.log("📡 Fetching goals from API...");
+
       const params: { [key: string]: string | number | boolean } = {
         page: page + 1,
         per_page: rowsPerPage,
       };
-      
+
       if (searchTerm) params.search = searchTerm;
       if (priorityFilter) params.priority = priorityFilter;
       if (goalTypeFilter) params.goal_type = goalTypeFilter;
-      if (statusFilter) params.status = statusFilter === "completed" ? true : false;
-      
+      if (statusFilter)
+        params.status = statusFilter === "completed" ? true : false;
+
       const response = await goalApi.getGoals(params);
-      
-      console.log('✅ Goals API Response:...............>>>>>>>>>>>>>>>', response.data);
-      
+
       // Handle different response structures
       if (response.data.goals) {
         // If response has goals array
@@ -144,13 +143,14 @@ function GoalsList() {
         setGoals([]);
         setTotalCount(0);
       }
-      
     } catch (error: unknown) {
       console.error("❌ Failed to load goals:", error);
-      
-      if (error && typeof error === 'object' && 'response' in error) {
-        const axiosError = error as { response?: { status?: number; data?: { message?: string } } };
-        
+
+      if (error && typeof error === "object" && "response" in error) {
+        const axiosError = error as {
+          response?: { status?: number; data?: { message?: string } };
+        };
+
         if (axiosError.response?.status === 404) {
           setGoals([]);
           setTotalCount(0);
@@ -169,7 +169,14 @@ function GoalsList() {
     } finally {
       setLoading(false);
     }
-  }, [page, rowsPerPage, searchTerm, priorityFilter, goalTypeFilter, statusFilter]);
+  }, [
+    page,
+    rowsPerPage,
+    searchTerm,
+    priorityFilter,
+    goalTypeFilter,
+    statusFilter,
+  ]);
 
   useEffect(() => {
     loadGoals();
@@ -179,7 +186,9 @@ function GoalsList() {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeRowsPerPage = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
@@ -215,17 +224,6 @@ function GoalsList() {
   return (
     <Box sx={{ p: 3 }}>
       {/* Header */}
-      <Box display="flex" flexDirection="column" alignItems="center" sx={{ mb: 3 }}>
-        <Avatar sx={{ m: 1, bgcolor: "primary.main" }}>
-          <ListAltIcon />
-        </Avatar>
-        <Typography component="h1" variant="h4" gutterBottom>
-          Goals List
-        </Typography>
-        <Typography variant="body1" color="text.secondary" align="center">
-          Track and manage all your goals in one place
-        </Typography>
-      </Box>
 
       {/* Search and Filters */}
       <Card sx={{ mb: 3 }}>
@@ -246,7 +244,7 @@ function GoalsList() {
                 }}
               />
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Priority</InputLabel>
@@ -262,7 +260,7 @@ function GoalsList() {
                 </Select>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Type</InputLabel>
@@ -278,7 +276,7 @@ function GoalsList() {
                 </Select>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={2}>
               <FormControl fullWidth>
                 <InputLabel>Status</InputLabel>
@@ -293,7 +291,7 @@ function GoalsList() {
                 </Select>
               </FormControl>
             </Grid>
-            
+
             <Grid item xs={12} sm={6} md={2}>
               <Box display="flex" gap={1}>
                 <Tooltip title="Clear Filters">
@@ -332,7 +330,11 @@ function GoalsList() {
                 </TableRow>
               ) : error ? (
                 <TableRow>
-                  <TableCell colSpan={8} align="center" sx={{ color: "error.main" }}>
+                  <TableCell
+                    colSpan={8}
+                    align="center"
+                    sx={{ color: "error.main" }}
+                  >
                     {error}
                   </TableCell>
                 </TableRow>
@@ -352,7 +354,11 @@ function GoalsList() {
                           <Typography variant="subtitle2" fontWeight={600}>
                             {goal.goal_title}
                           </Typography>
-                          <Typography variant="body2" color="text.secondary" noWrap>
+                          <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            noWrap
+                          >
                             {goal.description}
                           </Typography>
                         </Box>
@@ -418,7 +424,7 @@ function GoalsList() {
             </TableBody>
           </Table>
         </TableContainer>
-        
+
         <TablePagination
           rowsPerPageOptions={[5, 10, 25, 50]}
           component="div"
